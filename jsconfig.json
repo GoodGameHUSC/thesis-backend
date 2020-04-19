@@ -1,0 +1,16 @@
+{
+  "include": [
+    "./"
+  ],
+  "exclude": [
+    "node_modules",
+    "_log",
+    "_dbbackup",
+    ".vscode",
+  ],
+  "compilerOptions": {
+    "module": "commonjs",
+    "allowSyntheticDefaultImports": false,
+    "baseUrl": "./",
+  }
+}

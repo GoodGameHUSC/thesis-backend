@@ -1,0 +1,7 @@
+const ORDER_STATUS = {
+  PENDING : 1,
+  DELIVERING : 2,
+  RECEIVED : 3,
+  CANCELED : 4
+} 
+export default ORDER_STATUS
