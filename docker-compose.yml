@@ -1,0 +1,10 @@
+version: "3.4"
+
+services:
+  nginx:
+    build: .
+    container_name: shopping_me_backend
+    hostname: shopping_me_backend
+    ports:
+      - "8080:8000"
+    restart: unless-stopped

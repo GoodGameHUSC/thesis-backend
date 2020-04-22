@@ -6,7 +6,7 @@ let list_job = [];
 fs
   .readdirSync(__dirname)
   .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js' && file.indexOf('_index') == -1);
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js' && file.indexOf('index') == -1);
   })
   .forEach(file => {
     const job = require(path.join(__dirname, file));

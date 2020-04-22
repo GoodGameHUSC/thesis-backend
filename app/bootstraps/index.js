@@ -3,14 +3,14 @@
  * Init Firebase Client APP
  */
 
-require("../plugins/firebase-admin");
+// require("../plugins/firebase-admin");
 
 
 /**
  * 
  * Init Cronjob and Register 
  */
-require("../controllers/cronjob/_index")
+// require("../controllers/cronjob/index")
 
 
 /**
@@ -18,3 +18,10 @@ require("../controllers/cronjob/_index")
  */
 
 // require("../app/redis/redisServer");
+
+
+/**
+ * Connect Database
+ */
+
+require("./init_database.js");
