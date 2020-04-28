@@ -1,0 +1,6 @@
+type Users {
+  comments: [Comment]
+  id: ID!
+  text: String!
+  tags: [String]
+}

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=test nodemon -r esm --exec 'mocha --recursive -R min --timeout 10000'",
     "start": "node -r esm index.js",
-    "dev": "NODE_ENV=development DEBUG=express:* nodemon -r esm index.js",
+    "dev": "NODE_ENV=development DEBUG=express:* nodemon -r esm -e js,graphql,env -w .env -w . index.js",
     "flow": "flow",
     "flow:check": "flow check ./src/"
   },
@@ -30,6 +30,9 @@
     "fast-xml-parser": "^3.16.0",
     "googleapis": "^49.0.0",
     "graphql": "^15.0.0",
+    "graphql-playground-middleware-express": "^1.7.14",
+    "graphql-scalars": "^1.1.2",
+    "graphql-tools": "^5.0.0",
     "graphql-yoga": "^1.18.3",
     "gulp": "^4.0.2",
     "gulp-apidoc": "^0.2.8",
@@ -61,7 +64,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "flow-bin": "^0.121.0",
-    "http-server": "^0.12.1",
+    "http-server": "^0.12.3",
     "mocha": "^5.2.0",
     "nock": "^10.0.1",
     "nodemon": "^2.0.3",
