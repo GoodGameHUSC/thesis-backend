@@ -1,4 +1,4 @@
-import responseCode from 'config/responseCode';
+import responseCode from '../../config/responseCode';
 import { validationResult } from 'express-validator/check';
 
 const response_message = {

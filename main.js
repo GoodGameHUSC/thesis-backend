@@ -4,7 +4,6 @@ process.env.NODE_PATH = __dirname;
 require('module').Module._initPaths();
 
 const path = require('path');
-const graphqlHTTP = require('express-graphql');
 const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');

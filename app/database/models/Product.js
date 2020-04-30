@@ -20,12 +20,16 @@ const ProductSchema = new Schema({
   list_rating: [String]
 });
 
-ProductSchema.methods.findFriends = function () {
-  return new Promise((res, rej) => {
 
-  });
-}
 ProductSchema.plugin(mongoosePaginate);
+
+ProductSchema.statics.getSchema = function getSchema() {
+  return ProductSchema;
+}
+
+ProductSchema.statics.paginateQuery = function paginateQuery(query, page = 1, limit = 12) {
+  return this.paginate(query, { page, limit });
+}
 
 const ProductModel = mongoose.model('Product', ProductSchema)
 export default ProductModel;
