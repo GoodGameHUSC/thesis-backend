@@ -1,6 +1,5 @@
 import errorHandler from './app/middleware/http/errorHandle';
 import injector from './app/middleware/http/injector';
-import AppSchema from './app/database/graphql/index.js';
 process.env.NODE_PATH = __dirname;
 require('module').Module._initPaths();
 
@@ -12,9 +11,6 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const rootRoute = require('./app/controllers/index');
 // const cors = require("cors");
-const expressPlayground = require('graphql-playground-middleware-express')
-  .default
-
 export const app = express();
 
 require('dotenv').config()
@@ -36,14 +32,6 @@ require('./app/bootstraps')
  * Root URL
  */
 app.use('/', rootRoute, errorHandler)
-
-app.use('/graphql', graphqlHTTP({
-  schema: AppSchema,
-  rootValue: global,
-  graphiql: true,
-}));
-
-app.get('/playground', expressPlayground({ endpoint: '/graphql' }))
 
 export const io = require('socket.io')(server, {
   pingInterval: 50 * 60 * 10000,

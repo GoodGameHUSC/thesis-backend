@@ -1,6 +1,0 @@
-type Message {
-  sender_id: [Schema.Types.ObjectId],
-  created_at: Date,
-  content: String,
-  type: String
-}

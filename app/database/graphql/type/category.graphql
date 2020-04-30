@@ -1,9 +1,0 @@
-type Category {
-  name: String,
-  parent_id: ObjectID,
-  product_number: Int,
-  image: String,
-  description: String,
-  banner: [JSONObject],
-  sold_number: Int
-}

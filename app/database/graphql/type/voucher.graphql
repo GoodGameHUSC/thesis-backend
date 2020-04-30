@@ -1,9 +1,0 @@
-type Voucher {
-  name: String,
-  value: Number,
-  type: Number,
-  created_at: String,
-  shop_id: Schema.Types.ObjectId,
-  category_id: Schema.Types.ObjectId,
-  created_at: Date
-}

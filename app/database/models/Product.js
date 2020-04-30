@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const { Schema } = mongoose;
-
 const ProductSchema = new Schema({
   category_id: Schema.Types.ObjectId,
   collection_id: [String],
@@ -25,6 +25,7 @@ ProductSchema.methods.findFriends = function () {
 
   });
 }
+ProductSchema.plugin(mongoosePaginate);
 
 const ProductModel = mongoose.model('Product', ProductSchema)
 export default ProductModel;
