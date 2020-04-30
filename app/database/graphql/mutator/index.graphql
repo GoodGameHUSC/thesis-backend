@@ -1,0 +1,4 @@
+type Mutation {
+  setMessage(message: String): String,
+  login(id: String): String
+}

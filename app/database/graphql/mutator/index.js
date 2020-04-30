@@ -1,6 +1,6 @@
 
-const RootMutation = {
+const Mutation = {
   login: () => { }
 }
 
-export default RootMutation;
+export default Mutation;

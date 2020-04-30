@@ -1,6 +1,20 @@
 type Users {
-  comments: [Comment]
-  id: ID!
-  text: String!
-  tags: [String]
+   #Category name
+  _id: String
+  username: String,
+  email: String,
+  password: String,
+  phone_number: PhoneNumber,
+  display_name: String,
+  bio: String,
+  gender: Int,
+  validated: Boolean,
+  avatar: String,
+  background_image: String,
+  social_account: [JSONObject],
+  address_book: [JSONObject],
+  payment_account: [JSONObject],
+  setting: JSONObject,
+  updated_date: DateTime,
+  cart: [JSONObject]
 }

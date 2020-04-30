@@ -1,0 +1,10 @@
+type Live {
+  name: String,
+  description: String,
+  products: [Schema.Types.ObjectId],
+  shop_id: Schema.Types.ObjectId,
+  video_id: String,
+  schedule_time: Date,
+  current_viewer_number: Number,
+  max_viewer_number: Number,
+}

@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ProductSchema = new Schema({
-  category_id: [Schema.Types.ObjectId],
-  collection_id: [[Schema.Types.ObjectId]],
-  location: [String],
+  category_id: Schema.Types.ObjectId,
+  collection_id: [String],
+  location: [Object],
   name: String,
   average_rate: [Number],
   ship_fee: Number,
@@ -12,12 +12,12 @@ const ProductSchema = new Schema({
   discount: Number,
   rating: [Number],
   sold_number: Number,
-  gallery: [String],
+  gallery: [Object],
   status: Number,
-  shop_id: Schema.Types.ObjectId,
+  shop_id: String,
   feature: [Object],
   description: String,
-  list_rating: [Schema.Types.ObjectId]
+  list_rating: [String]
 });
 
 ProductSchema.methods.findFriends = function () {
