@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const mongoosePaginate = require('mongoose-paginate-v2');
 const CategorySchema = new Schema({
   name: String,
   parent_id: Schema.Types.ObjectId,
@@ -11,6 +10,8 @@ const CategorySchema = new Schema({
   sold_number: Number
 });
 
-CategorySchema.plugin(mongoosePaginate);
+const paginate = require('../plugins/paginate');
+CategorySchema.plugin(paginate);
+
 const CategoryModel = mongoose.model('Category', CategorySchema)
 export default CategoryModel;

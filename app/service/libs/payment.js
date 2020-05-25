@@ -137,7 +137,7 @@ class Payment {
         currency: 'usd',
         capture: capture,
         description: description,
-        card: cardId
+        card: cardId,
       }
       stripe.charges.create(params, function (err, charge) {
         if (charge) res(charge);

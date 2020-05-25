@@ -16,8 +16,9 @@ const UserSchema = new Schema({
   address_book: [Object],
   payment_account: [Object],
   setting: Object,
-  updated_date: { type: Date, default: Date.now },
   cart: [Object]
+}, {
+  timestamps: true
 });
 
 UserSchema.methods.findFriends = function () {
@@ -25,6 +26,18 @@ UserSchema.methods.findFriends = function () {
 
   });
 }
+
+UserSchema.virtual('stripe_account_id').get(function () {
+  try {
+    const stripe_accounts = this.payment_account.filter(method => method.type == 'stripe');
+    if (stripe_accounts.length == 0) return null
+    const stripe_account = stripe_accounts[0];
+    return stripe_account.info.stripe_account_id
+  } catch (error) {
+    console.log(error)
+    return null;
+  }
+})
 
 const UserModel = mongoose.model('User', UserSchema)
 export default UserModel;
