@@ -23,10 +23,13 @@ const OrderSchema = new Schema({
   delivery_method: Object,
   created_at: Date,
   status: Number,
+  notes: String,
   price: Number,
   bill: Object,
   voucher: [Object],
   milestone: [Object]
+}, {
+  timestamps: true
 });
 
 const OrderModel = mongoose.model('Order', OrderSchema)

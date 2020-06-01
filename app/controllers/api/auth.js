@@ -5,7 +5,7 @@ import validate from '../../middleware/validator/index';
 import UserModel from '../../database/models/User';
 import { getAccessToken, expireTime, requireLogin } from '../../middleware/http/requireLogin.js';
 import { Hashing } from '../../service/libs/authentication';
-
+import { randomVerifyCode } from '../../utils/random'
 
 const router = app.Router();
 
@@ -83,6 +83,64 @@ router.post('/login',
     }
   })
 
+
+// TODO: need Test
+router.post('/forgot-password',
+  validate([
+    check('email', 'Vui lòng nhập địa chỉ email của bạn').not().isEmpty().isEmail().withMessage("Email không hợp lệ"),
+  ]), async (req, res, next) => {
+    try {
+      let { action } = req.body;
+
+      switch (action) {
+        case "REQUIRE": if (true) {
+          let { email } = req.body;
+          let user = await UserModel.findOne({ email: email });
+          if (!user) return res.errors("Địa chỉ email không tồn tại trong hệ thống")
+
+          const code = randomVerifyCode()
+          user.secret_info.change_password_verify_code = code;
+          user.secret_info.change_password_issue_at = new Date();
+          user.save();
+
+          return res.success({
+            code: code
+          })
+        };
+        case "VERIFY": if (true) {
+          let { email, code } = req.body;
+          let user = await UserModel.findOne({ email: email });
+          if (!user) return res.errors("Địa chỉ email không tồn tại trong hệ thống")
+
+          if (
+            user.secret_info.change_password_verify_code === code
+            && user.secret_info.change_password_issue_at
+          ) {
+            if (user.secret_info.change_password_issue_at.getTime() < now()) {
+              const token = randomString(10)
+              user.secret_info.change_password_token = token;
+              await user.save();
+              return res.success({ token });
+            }
+            else return res.errors("Mã xác thực đã hết hạn")
+          } else return res.errors("Mã xác thực không chính xác")
+        };
+        case "CHANGE_PASSWORD": if (true) {
+          let { email, token, new_pass } = req.body;
+          let user = await UserModel.findOne({ email: email });
+          if (!user) return res.errors("Địa chỉ email không tồn tại trong hệ thống")
+          if (user.secret_info.change_password_token === token) {
+            user.password = await Hashing.encrypt(password);
+            await user.save();
+            res.success();
+          } else return res.error("Tác vụ thất bại, vui lòng liên hệ tổng đài tư vấn để được trợ giúp")
+        };
+        default: return res.errors("Chưa rõ hành động yêu cầu")
+      }
+    } catch (error) {
+      next(error)
+    }
+  })
 
 module.exports = router;
 

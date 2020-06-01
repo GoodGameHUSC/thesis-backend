@@ -1,11 +1,12 @@
+
 ### api
 
 auth#
 
-- login
-- sign up
-- login/sign up fb, google
-- forgot password
+- login #
+- sign up #
+- login/sign up fb, google [x]
+- forgot password [v]
 
 
 profile #
@@ -19,13 +20,13 @@ profile #
   - chuyển khoản
   - tiền mặt 
 - social account
-- app setting 
+- app setting #
 
 Home #
 - home
-- top search product 
-- list product in home
-- search: product, shop, category
+- top search product #
+- list product in home #
+- search: product, shop, category #
 
 product #
 - category#
@@ -39,31 +40,33 @@ product #
 <!-- - question -->
 
 
-new feed (realtime) #
+new feed (realtime) 
 - list new feed
 - add new feed
 - comment, like 
 - search: people, hashtag 
 
 buy #
-- add product to cart 
-- synchorise cart
-- order
-- leave rating
-- get point/ use point
+- add product to cart #
+- synchronise cart [x]
+- order #
+- leave rating #
+- get point/ use point 
 - money
 
-sell #
+shop & sell #
+
+- init sell shop 
+- shop info
+- product of shop
+- chat
+- follow 
+
 - upload product
 - edit product. change status
 - view order
 - receive payment
 
-shop#
-- shop info
-- product of shop
-- chat
-- follow 
 
 livestream#
 - start live stream
@@ -118,10 +121,10 @@ new feed (realtime)
 - search: people, hashtag #
 
 buy #
-- add product to cart 
-- synchorise cart
-- order
-- leave rating
+- add product to cart #
+- synchorise cart #
+- order #
+- leave rating #dd
 - get point/ use point
 - money
 

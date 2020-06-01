@@ -1,6 +1,24 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const SocialAccountSchema = new Schema({
+  origin_id: String,
+  provider: String,
+  additional_info: Object
+}, {
+  timestamps: true
+});
+const SocialAccModel = mongoose.model('SocialAccount', SocialAccountSchema)
+
+const CartSchema = new Schema({
+  product_id: Schema.Types.ObjectId,
+  product_snapshot: Object,
+  amount: Number
+}, {
+  timestamps: true
+});
+const CartModel = mongoose.model('CartAccount', CartSchema)
+
 const UserSchema = new Schema({
   username: String,
   email: String,
@@ -16,7 +34,9 @@ const UserSchema = new Schema({
   address_book: [Object],
   payment_account: [Object],
   setting: Object,
-  cart: [Object]
+  cart: [Object],
+  wishlist: [Object],
+  secret_info: Object
 }, {
   timestamps: true
 });
@@ -38,6 +58,10 @@ UserSchema.virtual('stripe_account_id').get(function () {
     return null;
   }
 })
-
 const UserModel = mongoose.model('User', UserSchema)
+
 export default UserModel;
+export {
+  SocialAccModel,
+  CartModel
+}

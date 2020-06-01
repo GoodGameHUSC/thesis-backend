@@ -20,7 +20,8 @@ const RatingSchema = new Schema({
   star: Number,
   image: String,
   replies: [Object],
-  quick_reviews: [String]
+  quick_reviews: [String],
+  report: Object
 }, {
   timestamps: true
 });

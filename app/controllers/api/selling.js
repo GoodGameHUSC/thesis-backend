@@ -2,7 +2,7 @@ const app = require('express');
 import { requireLogin } from '../../middleware/http/requireLogin.js';
 import { Address } from '../../definitions/sequelize/address';
 import responseCode from '../../config/responseCode';
-import UserModel, { CartModel } from '../../database/models/User';
+import UserModel from '../../database/models/User';
 
 import { check } from 'express-validator';
 import validate from '../../middleware/validator/index';
@@ -114,41 +114,6 @@ router.post('/update-app-setting',
       const new_setting = { ...user.setting, ...setting };
       user.setting = new_setting;
       await user.save();
-      return res.success(user);
-    } catch (error) {
-      console.log(error)
-      next(error)
-    }
-  })
-
-router.post('/synchronise-cart',
-  requireLogin,
-  async (req, res, next) => {
-    try {
-      const { carts } = req.body;
-      const current_carts = req.user.carts;
-
-      const match_cart = (cart) => {
-        current_carts.some(element => element.product_id == cart.product_id)
-      }
-      Promise.all(
-        carts.map((cart_local) => {
-          let current_cart = match_cart(cart_local);
-          if (current_cart) {
-            if (current_cart.amount != cart_local.amount) {
-              current_cart.amount = cart_local.amount
-              return current_cart.save();
-            }
-          } else {
-            const new_cart = new CartModel({
-              product_id: cart_local.product._id,
-              product_snapshot: cart_local.product,
-              amount: cart_local.amount
-            })
-            return new_cart.save();
-          }
-        })
-      )
       return res.success(user);
     } catch (error) {
       console.log(error)
