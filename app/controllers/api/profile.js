@@ -155,8 +155,6 @@ router.post('/synchronise-cart',
       next(error)
     }
   })
+
+
 module.exports = router;
-
-
-
-

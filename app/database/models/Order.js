@@ -5,11 +5,10 @@ const BillSchema = new Schema({
   total: Number,
   tax: Number,
   sub_total: Number,
-  bill_detail: [Object],
-  order_id: Schema.Types.ObjectId,
-  createdAt: Date,
+  bill_detail: Object,
   payment_method: String,
   status: Number,
+  createdAt: Date,
   paidAt: Date,
 });
 export const BillModel = mongoose.model('Bill', BillSchema)

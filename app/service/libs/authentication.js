@@ -12,4 +12,3 @@ export const Hashing = {
     return bcrypt.compare(password, encryptedCode);
   }
 }
-// export default AuthService;

@@ -40,7 +40,7 @@ const ProductSchema = new Schema({
     }
   },
   status: Number,
-  shop_id: String,
+  shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   feature: [Object],
   description: String,
   list_rating: [String],

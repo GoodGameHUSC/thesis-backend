@@ -17,25 +17,15 @@ router.post('/create-order',
   async (req, res, next) => {
     try {
       const user = req.user;
-      const { orders, address, ship_method, payment_method } = req.body.order_data;
-      // chung
-      // dia chi
-      // don vi van chuyen
-      // rieng 
-      // coupon
-
-      // ma san pham
-      // loai hang
-      // so luong
-      // bill
-      // notes
+      const { orders, address, ship_method, payment_method } = req.body;
 
       await Promise.all(orders.map(order => {
+        debugger;
         const bill = new BillModel({
           sub_total: order.bill.sub_total,
           tax: order.bill.tax,
           total: order.bill.total,
-          bill_detail: [order.bill.items],
+          bill_detail: order.bill.bill_detail,
           createdAt: new Date(),
           payment_method: payment_method,
           status: 0,
@@ -43,9 +33,9 @@ router.post('/create-order',
 
         const orderRecord = new OrderModel({
           user_id: user._id,
-          shop_id: order.shop._id,
+          shop_id: order.shop_id,
           amount: order.amount,
-          product_id: order.product._id,
+          product_id: order.product_id,
           receive_address: address._id,
           delivery_method: ship_method._id,
           notes: order.notes,
@@ -57,13 +47,50 @@ router.post('/create-order',
 
         return orderRecord.save();
       }));
+
       res.success();
 
     } catch (error) {
       console.log(error)
       next(error)
     }
-  })
+  });
+
+router.get('/all',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const { status } = req.query;
+
+      let query = { user_id: user._id }
+      if (status) query = { ...query, status }
+      const orders = await OrderModel.find(query);
+
+      res.success(orders);
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  });
+
+
+router.get('/detail/{id}',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const { id } = req.params;
+
+      let query = { user_id: user._id, id }
+      const orders = await OrderModel.findById(query);
+
+      res.success(orders);
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  });
 
 router.post('/add-wishlist',
   requireLogin,
@@ -86,8 +113,7 @@ router.post('/add-wishlist',
       console.log(error)
       next(error)
     }
-  }
-)
+  });
 
 router.post('/remove-wishlist',
   requireLogin,
@@ -101,7 +127,7 @@ router.post('/remove-wishlist',
       console.log(error)
       next(error)
     }
-  })
+  });
 
 module.exports = router;
 

@@ -5,6 +5,7 @@ import { requireLogin } from '../../middleware/http/requireLogin.js';
 import validate from '../../middleware/validator/index';
 import { Hashing } from '../../service/libs/authentication';
 import RatingModel, { RatingReplyModel } from '../../database/models/Rating';
+import ShopModel from '../../database/models/Shop';
 const router = app.Router();
 
 
@@ -56,7 +57,15 @@ router.get('/detail',
     try {
       const { select, id } = req.query;
       let selected = select || null
-      let result = await ProductModel.findById(id).select(selected);
+      let instance = await ProductModel.findById(id);
+
+      // TODO: Remove after several request
+      if (!instance.shop) {
+        instance.shop = '5edeead3a5a7e1331d8812a8';
+        await instance.save();
+      }
+
+      let result = await ProductModel.findById(id).select(selected).populate('shop');
       res.success(result);
     } catch (error) {
       next(error)
