@@ -10,14 +10,15 @@ const ChatUserModelSchema = new Schema({
 });
 
 const ConversationSchema = new Schema({
-  room_id: String,
   user_id: [Schema.Types.ObjectId],
   chat_user: Object,
   created_at: Date,
   name: String,
   mode: String
+}, {
+  timestamps: true
 });
 
 const ConversationModel = mongoose.model('Conversation', ConversationSchema)
-export const ChatUserModel = mongoose.model('ChatUserModel', ChatUserModelSchema)
+export const ChatUserModel = mongoose.model('ChatUser', ChatUserModelSchema)
 export default ConversationModel;

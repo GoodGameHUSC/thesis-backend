@@ -15,9 +15,15 @@ export const BillModel = mongoose.model('Bill', BillSchema)
 
 const OrderSchema = new Schema({
   user_id: Schema.Types.ObjectId,
-  shop_id: Schema.Types.ObjectId,
+  shop: {
+    type: Schema.Types.ObjectId,
+    ref: 'Shop'
+  },
   amount: Number,
-  product_id: Schema.Types.ObjectId,
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product'
+  },
   receive_address: Object,
   delivery_method: Object,
   created_at: Date,
@@ -26,7 +32,11 @@ const OrderSchema = new Schema({
   price: Number,
   bill: Object,
   voucher: [Object],
-  milestone: [Object]
+  milestone: [Object],
+  rating: {
+    type: Schema.Types.ObjectId,
+    ref: 'Rating'
+  },
 }, {
   timestamps: true
 });

@@ -6,6 +6,7 @@ import validate from '../../middleware/validator/index';
 import { Hashing } from '../../service/libs/authentication';
 import RatingModel, { RatingReplyModel } from '../../database/models/Rating';
 import ShopModel from '../../database/models/Shop';
+import NLPService from '../../service/nlp/index';
 const router = app.Router();
 
 
@@ -57,16 +58,21 @@ router.get('/detail',
     try {
       const { select, id } = req.query;
       let selected = select || null
-      let instance = await ProductModel.findById(id);
+      let instance = await ProductModel.findById(id).populate('');
+      const rating = await RatingModel.find({ product: id }).populate('user', 'username avatar', null, null, { sort: '-createdAt', limit: 2 });
+
 
       // TODO: Remove after several request
       if (!instance.shop) {
-        instance.shop = '5edeead3a5a7e1331d8812a8';
+        instance.shop = '5edf03061592673c2ffcf678';
         await instance.save();
       }
 
       let result = await ProductModel.findById(id).select(selected).populate('shop');
-      res.success(result);
+
+      // result.rates = rating;
+
+      res.success({ product: result, rating });
     } catch (error) {
       next(error)
     }
@@ -125,12 +131,14 @@ router.post('/create-rating',
       const { product_id, content, star } = req.body;
       const user = req.user;
 
-      const previous_rating = await RatingModel.findOne({ product_id, user_id: user.id });
+
+
+      const previous_rating = await RatingModel.findOne({ product: product_id, user: user.id });
       if (previous_rating) return res.errors("Bạn đã đánh giá sản phẩm này trước đó");
 
       const rating = new RatingModel({
-        user_id: user.id,
-        product_id,
+        user: user.id,
+        product: product_id,
         content,
         star,
         image: '',
@@ -141,6 +149,14 @@ router.post('/create-rating',
       await rating.save();
 
       res.success(rating);
+
+
+      const { result } = await NLPService.sentiment_analysis(content);
+
+      if (result) {
+        rating.sentiment = result.label;
+        await rating.save();
+      }
     } catch (error) {
       console.log(error)
       next(error)
@@ -187,11 +203,13 @@ router.get('/view-rating',
       const { product_id, limit = 20, page = 1, select = null } = req.query;
 
       let query = {
-        product_id
+        product: product_id
       };
 
       let result = await RatingModel.paginateQuery(query, page, limit, {
-        select, sort: '-createdAt'
+        select,
+        populate: { path: 'user', select: 'username avatar' },
+        sort: '-createdAt'
       })
       res.paginate(result);
     } catch (error) {

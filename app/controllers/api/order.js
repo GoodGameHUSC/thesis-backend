@@ -33,9 +33,9 @@ router.post('/create-order',
 
         const orderRecord = new OrderModel({
           user_id: user._id,
-          shop_id: order.shop_id,
+          shop: order.shop_id,
           amount: order.amount,
-          product_id: order.product_id,
+          product: order.product_id,
           receive_address: address._id,
           delivery_method: ship_method._id,
           notes: order.notes,
@@ -65,7 +65,7 @@ router.get('/all',
 
       let query = { user_id: user._id }
       if (status) query = { ...query, status }
-      const orders = await OrderModel.find(query);
+      const orders = await OrderModel.find(query).populate('shop').populate('product');
 
       res.success(orders);
     } catch (error) {

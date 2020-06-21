@@ -37,6 +37,6 @@ export const io = require('socket.io')(server, {
   pingTimeout: 10 * 60 * 1000,
 });
 
-// require("./app/controllers/socket.io/index");
+require("./app/controllers/socket.io/index");
 
 module.exports = server;

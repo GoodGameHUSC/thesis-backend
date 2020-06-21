@@ -1,11 +1,12 @@
-import { io } from "../../main";
+import { io } from "../../../main";
 const fs = require('fs');
 const path = require('path');
 const basename = path.basename(__filename);
 
 io.on('connection', function (socket) {
 
-  // auto import all file in routes/realtime except itself
+  console.log("Connected")
+  // auto import all file in routes / realtime except itself
   fs
     .readdirSync(__dirname)
     .filter(file => {
@@ -25,7 +26,7 @@ io.on('connection', function (socket) {
     //   device: socket.handshake.headers['user-agent'],
     // });
 
-    console.log("Disconnect from ", socket.handshake.headers['user-agent'])
+    console.log("Disconnect", socket.handshake.headers['user-agent'])
   });
 
 });

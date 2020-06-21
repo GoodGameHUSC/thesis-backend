@@ -1,116 +1,71 @@
 const app = require('express');
-import { requireLogin } from '../../middleware/http/requireLogin.js';
-import { Address } from '../../definitions/sequelize/address';
-import responseCode from '../../config/responseCode';
-import UserModel, { CartModel } from '../../database/models/User';
-
-import { check } from 'express-validator';
-import validate from '../../middleware/validator/index';
-import { Hashing } from '../../service/libs/authentication';
-import ShopModel from '../../database/models/Shop';
+import ConversationModel, { ChatUserModel } from '../../database/models/Conversation';
 import ProductModel from '../../database/models/Product';
+import ShopModel from '../../database/models/Shop';
+import { requireLogin } from '../../middleware/http/requireLogin.js';
+
 
 const router = app.Router();
 const mongoose = require('mongoose');
 
 
-router.post('/get-conversation',
+router.get('/get-conversation',
   requireLogin,
   async (req, res, next) => {
     try {
+      const { user_id, shop_id } = req.query;
+      const conversation = await ConversationModel.findOne({ user_id: { "$in": [user_id, shop_id] } });
+
+      if (conversation) return res.success(conversation);
+
       const user = req.user;
+      const shop = await ShopModel.findById(shop_id);
 
-      const currentShop = await ShopModel.findOne({ master_id: user._id, is_active: true });
-
-      if (currentShop) return res.errors("Bạn chỉ có thể quản lý 1 cửa hàng tại 1 thời điểm");
-
-      const { name, slogan, phone_number, address, website_url } = req.body;
-
-      const shop = new ShopModel({
-        master_id: user._id,
-        name,
-        slogan,
-        phone_number,
-        address,
-        website_url,
-        is_active: true,
-        brand_image: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/The-Body-Shop-Logo.svg',
-        brand_background: 'https://is4.revolveassets.com/images/up/2020/June/060820_f_soontosellout_01.jpg',
-        average_rate: null,
-        rates: []
+      const chat_user = {
+        [user_id]: new ChatUserModel({
+          modelType: 'User',
+          avatar: user.avatar,
+          name: user.username,
+          alias: null
+        }),
+        [shop_id]: new ChatUserModel({
+          modelType: 'Shop',
+          avatar: shop.brand_image,
+          name: shop.name,
+          alias: null
+        })
+      }
+      const newConversation = new ConversationModel({
+        user_id: [user_id, shop_id],
+        chat_user: chat_user,
+        name: 'Trò chuyện mua hàng',
+        mode: 'public'
       })
 
-      await shop.save();
+      await newConversation.save();
 
-      return res.success(shop, 'Tạo cửa hàng thành công');
+      return res.success(newConversation, 'Tạo cửa hàng thành công');
     } catch (error) {
       console.log(error)
       next(error)
     }
   })
 
-router.get('/view-shop/:id',
+
+router.get('/all-with-shop',
   requireLogin,
   async (req, res, next) => {
     try {
-      const id = req.params.id;
-      const shop = await ShopModel.findOne({ _id: id, is_active: true });
+      const { user_id, shop_id } = req.query;
+      // TODO: change
+      const conversation = await ConversationModel.find({ user_id: { "$in": [user_id, shop_id] } });
 
-      if (!shop) return res.errors("Không tìm thấy cửa hàng");
-
-      const products = await ProductModel.find({ shop_id: id });
-
-      return res.success({ info: shop, products });
+      return res.success(conversation, 'Tạo cửa hàng thành công');
     } catch (error) {
       console.log(error)
       next(error)
     }
   })
 
-router.post('/update-shop/:id',
-  requireLogin,
-  async (req, res, next) => {
-    try {
-      const id = req.params.id;
-      const shop = await ShopModel.findOne({ _id: id, is_active: true });
-
-      if (!shop) return res.errors("Không tìm thấy cửa hàng");
-
-      const { name, slogan, phone_number, address, website_url } = req.body;
-
-      shop.name = name ? name : shop.name;
-      shop.slogan = slogan ? slogan : shop.slogan;
-      shop.phone_number = phone_number ? phone_number : shop.phone_number;
-      shop.address = address ? address : shop.address;
-      shop.website_url = website_url ? website_url : shop.website_url;
-
-      await shop.save();
-
-      return res.success(shop);
-    } catch (error) {
-      console.log(error)
-      next(error)
-    }
-  })
-
-router.post('/remove-shop/:id',
-  requireLogin,
-  async (req, res, next) => {
-    try {
-
-      const id = req.params.id;
-      const shop = await ShopModel.findOne({ _id: id, is_active: true });
-
-      if (!shop) return res.errors("Không tìm thấy cửa hàng");
-
-      shop.is_active = false;
-      await shop.save();
-
-      return res.success();
-    } catch (error) {
-      console.log(error)
-      next(error)
-    }
-  })
 
 module.exports = router;

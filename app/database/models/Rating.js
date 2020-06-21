@@ -14,21 +14,34 @@ const RatingReplySchema = new Schema({
 const RatingReplyModel = mongoose.model('RatingReply', RatingReplySchema)
 
 const RatingSchema = new Schema({
-  user_id: Schema.Types.ObjectId,
-  product_id: Schema.Types.ObjectId,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product'
+  },
   content: String,
   star: Number,
   image: String,
   replies: [Object],
   quick_reviews: [String],
-  report: Object
+  report: Object,
+  sentiment: String
 }, {
   timestamps: true
 });
 
-
 const paginate = require('../plugins/paginate');
 RatingSchema.plugin(paginate);
+
+RatingSchema.virtual('created_at').get(function () {
+  return this.createdAt.getTime();
+});
+
+RatingSchema.set('toJSON', { getters: true, virtuals: true });
+
 const RatingModel = mongoose.model('Rating', RatingSchema)
 export default RatingModel;
 export {

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+import RatingModel from './Rating';
 const { Schema } = mongoose;
 
 const ProductSchema = new Schema({
@@ -43,7 +44,9 @@ const ProductSchema = new Schema({
   shop: { type: Schema.Types.ObjectId, ref: 'Shop' },
   feature: [Object],
   description: String,
-  list_rating: [String],
+  list_rating: {
+    type: [Object]
+  },
   visited_number: Number
 }, {
   timestamp: true
@@ -55,6 +58,13 @@ ProductSchema.plugin(paginate);
 ProductSchema.virtual('real_price').get(function () {
   return this.discount > 0 ? Math.ceil((this.price * (100 - this.discount)) / 100) : null;
 });
+
+// ProductSchema.virtual('list').get(async function () {
+//   const list = await RatingModel.find({ product: "5ea8f91a632821087002234b" });
+//   debugger;
+//   return [];
+// });
+
 ProductSchema.set('toJSON', { getters: true, virtuals: true });
 
 ProductSchema.index({ 'name': 'text' }) // full-text search

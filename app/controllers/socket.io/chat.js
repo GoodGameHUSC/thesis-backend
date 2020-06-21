@@ -1,27 +1,45 @@
+import { io } from '../../../main.js'
 
-import DBRef from '../../app/libs/ref';
-import EVENT_NAME from '../../constants/EVENT_NAME';
-const rootRef = () => new DBRef(EVENT_NAME.TASK);
 
 const EventName = {
   JOIN_CONVERSATION: 'join_conversation',
   LEAVE_CONVERSATION: 'leave_conversation',
-  SEND_MESSAGE: 'send_message',
+  NEW_MESSAGE: 'new_message',
   RECEIVE_MESSAGE: 'receive_message'
 }
 
 module.exports = (socket) => {
 
+  /**
+   * data:
+   * {
+   *     room_id: conversation._id,
+   *     user: { username: user.username, _id: user._id }
+   * }
+   */
   socket.on(EventName.JOIN_CONVERSATION, function (data) {
-
+    console.log(Date.now())
+    console.log(`${data.user.username} has join conversation: ${data.room_id}`);
+    socket.join(data.room_id);
   })
+
 
   socket.on(EventName.LEAVE_CONVERSATION, function (data) {
 
   })
 
-  socket.on(EventName.SEND_MESSAGE, function (data) {
-
+  /**
+   * data:
+   * {
+   *   room_id: conversation._id,
+   *   user_id: 
+   *  msg_content: messages,
+   *   
+   * }
+   */
+  socket.on("send_message", function (data) {
+    console.log("New message from " + data.user_id + " :" + data.msg_content.text);
+    io.to(data.room_id).emit('receive_message', data);
   })
 
 };
