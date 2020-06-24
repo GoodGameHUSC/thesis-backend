@@ -49,18 +49,18 @@ router.post('/create-shop',
     }
   })
 
-router.get('/view-shop/:id',
-  requireLogin,
+router.get('/view-shop',
   async (req, res, next) => {
     try {
-      const id = req.params.id;
+      const { id } = req.query;
       const shop = await ShopModel.findOne({ _id: id, is_active: true });
 
       if (!shop) return res.errors("Không tìm thấy cửa hàng");
 
-      const products = await ProductModel.find({ shop_id: id });
+      const master = await UserModel.findById({ _id: shop.master_id })
+      const products = await ProductModel.find({ shop: id });
 
-      return res.success({ info: shop, products });
+      return res.success({ info: shop, products, master });
     } catch (error) {
       console.log(error)
       next(error)
@@ -112,5 +112,69 @@ router.post('/remove-shop/:id',
       next(error)
     }
   })
+
+
+router.get('/view-products/:id',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { limit = 20, page = 1, keyword = '', select = null, category_id } = req.query;
+      const id = req.params.id;
+      let query = {
+        shop: id,
+        status: {
+          $ne: -1
+        }
+      };
+
+      if (category_id) query.category_id = category_id;
+      let result = await ProductModel.find(query)
+      res.paginate(result);
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  })
+
+router.get('/view-detail/:shop_id/product/:product_id',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { shop_id, product_id } = req.params.id;
+      const query = {
+        _id: product_id,
+        shop: shop_id
+      };
+      let result = await ProductModel.findOne(query).populate('shop');
+      if (!result) return res.errors("Không tìm thấy sản phẩm");
+      return res.success(result);
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  })
+
+router.post('/remove-product',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { shop_id, product_id } = req.body;
+      debugger;
+      const query = {
+        _id: product_id,
+        shop: shop_id
+      };
+      let result = await ProductModel.findOne(query).populate('shop');
+      if (!result) return res.errors("Không tìm thấy sản phẩm");
+
+      result.status = -1;
+      await result.save();
+      return res.success();
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
+)
 
 module.exports = router;

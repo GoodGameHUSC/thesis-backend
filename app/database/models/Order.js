@@ -15,6 +15,10 @@ export const BillModel = mongoose.model('Bill', BillSchema)
 
 const OrderSchema = new Schema({
   user_id: Schema.Types.ObjectId,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   shop: {
     type: Schema.Types.ObjectId,
     ref: 'Shop'

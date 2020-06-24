@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+import ShopModel from './Shop';
 const { Schema } = mongoose;
 
 const SocialAccountSchema = new Schema({
@@ -37,28 +38,32 @@ const UserSchema = new Schema({
   cart: [Object],
   wishlist: [Object],
   secret_info: Object,
+  shop: {
+    type: Schema.Types.ObjectId,
+    ref: 'Shop'
+  },
   interested: {
     type: [Object],
-    get: function () {
-      return this.interested.map(e => e.keyword)
-    },
-    set: function (new_keywords) {
-      let current = this.interested
-      new_keywords.forEach(element => {
-        let exited = false
-        current.forEach(current_object => {
-          if (current_object.keyword === element) {
-            exited = true;
-            current_object.times++;
-          }
-        })
-        if (!exited) current.push({ keyword: element, times: 1 })
-      });
+    // get: function () {
+    //   return this.interested.map(e => e.keyword)
+    // },
+    // set: function (new_keywords) {
+    //   let current = this.interested
+    //   new_keywords.forEach(element => {
+    //     let exited = false
+    //     current.forEach(current_object => {
+    //       if (current_object.keyword === element) {
+    //         exited = true;
+    //         current_object.times++;
+    //       }
+    //     })
+    //     if (!exited) current.push({ keyword: element, times: 1 })
+    //   });
 
-      current.sort(function (x, y) { return -(x.times - y.times) });
-      current.slice(0, 10);
-      return current;
-    }
+    //   current.sort(function (x, y) { return -(x.times - y.times) });
+    //   current.slice(0, 10);
+    //   return current;
+    // }
   }
 }, {
   timestamps: true
@@ -76,6 +81,7 @@ UserSchema.virtual('stripe_account_id').get(function () {
     return null;
   }
 })
+
 const UserModel = mongoose.model('User', UserSchema)
 
 export default UserModel;

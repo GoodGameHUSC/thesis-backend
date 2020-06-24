@@ -3,7 +3,7 @@
  * Init Firebase Client APP
  */
 
-// require("../plugins/firebase-admin");
+require("../service/plugins/firebase-admin");
 
 
 /**

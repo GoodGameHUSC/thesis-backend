@@ -92,3 +92,5 @@ app/config/
 .env
 .env.prod
 .env.dev
+
+serviceAccount.json

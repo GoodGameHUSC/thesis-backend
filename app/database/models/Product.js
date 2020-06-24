@@ -24,19 +24,19 @@ const ProductSchema = new Schema({
   gallery: {
     type: [Object],
     get: (v) => {
-      if (v) {
-        const list_random = [
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
-        ]
-        v.push({
-          "_id": "5d219e0350402c001c10434",
-          "link": list_random[Math.floor(list_random.length * Math.random())],
-          "type": "video"
-        })
-        return v;
-      }
+      // if (v) {
+      //   const list_random = [
+      //     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      //     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      //     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
+      //   ]
+      //   v.push({
+      //     "_id": "5d219e0350402c001c10434",
+      //     "link": list_random[Math.floor(list_random.length * Math.random())],
+      //     "type": "video"
+      //   })
+      //   return v;
+      // }
       return v;
     }
   },

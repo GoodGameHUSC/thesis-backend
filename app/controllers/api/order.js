@@ -8,6 +8,7 @@ import { check } from 'express-validator';
 import validate from '../../middleware/validator/index';
 import { Hashing } from '../../service/libs/authentication';
 import OrderModel, { BillModel } from '../../database/models/Order';
+import ShopModel from '../../database/models/Shop';
 
 const router = app.Router();
 const mongoose = require('mongoose');
@@ -33,6 +34,7 @@ router.post('/create-order',
 
         const orderRecord = new OrderModel({
           user_id: user._id,
+          user: user._id,
           shop: order.shop_id,
           amount: order.amount,
           product: order.product_id,
@@ -123,6 +125,60 @@ router.post('/remove-wishlist',
       const { product_id } = req.body;
       await UserModel.update({ _id: user._id }, { $pull: { wishlist: { _id: product_id } } })
       res.success();
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  });
+
+router.get('/of-shop',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { id, status } = req.query;
+      const user = req.user;
+
+      const orders = await OrderModel.find({ shop: id, status })
+        .populate('product')
+        .populate('shop')
+        .populate('user');
+      res.success(orders);
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  });
+
+router.get('/of-user-shop',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { status } = req.query;
+      const user = req.user;
+      const shop = await ShopModel.findOne({
+        master_id: user.id
+      })
+      const orders = await OrderModel.find({ shop: shop.id, status })
+        .populate('product')
+        .populate('shop')
+        .populate('user');
+      res.success(orders);
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  });
+
+router.post('/change-status',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { id, status } = req.body;
+
+      const orders = await OrderModel.findById(id)
+      orders.status = status;
+      await orders.save();
+      res.success(orders);
     } catch (error) {
       console.log(error)
       next(error)

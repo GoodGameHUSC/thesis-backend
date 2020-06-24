@@ -68,4 +68,20 @@ router.get('/all-with-shop',
   })
 
 
+router.get('/all-of-customer',
+  requireLogin,
+  async (req, res, next) => {
+    try {
+      const { user_id } = req.query;
+      // TODO: change
+      const conversation = await ConversationModel.find({ user_id: { "$in": [user_id] } });
+
+      return res.success(conversation, 'Tạo cửa hàng thành công');
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  })
+
+
 module.exports = router;

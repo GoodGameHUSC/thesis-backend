@@ -49,6 +49,29 @@ const injector = async (req, res, next) => {
     return res.status(statusCode).json(responseOb)
   }
 
+  res.paginateAdditional = (data = null, message = 'OK', statusCode = 200, additionalData = null) => {
+    let responseOb = {
+      success: true,
+      message: message || 'OK',
+    }
+    if (data) {
+      if (data.docs) {
+        responseOb = { ...responseOb, data: data.docs };
+      } else responseOb = { ...responseOb, data: data };
+
+      if (data.totalDocs) {
+        // Pagination model
+        delete data.docs;
+        responseOb = { ...responseOb, pagination: data };
+      }
+      if (additionalData) {
+        responseOb = { ...responseOb, ...additionalData };
+      }
+    }
+    if (statusCode < 200 || statusCode > 299) statusCode = 200;
+    return res.status(statusCode).json(responseOb)
+  }
+
   res.io = io;
   next()
 }

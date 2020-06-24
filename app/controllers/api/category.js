@@ -15,7 +15,9 @@ router.get('/get',
   async (req, res, next) => {
     try {
       const { limit, page, select = 'name image', sort = 'name' } = req.query;
-      let query = {};
+      let query = {
+
+      };
       let result = await CategoryModel.paginateQuery(query, page, limit, { select, sort })
       res.paginate(result);
 
@@ -30,7 +32,11 @@ router.get('/detail',
       const { limit, page, select = 'name image', sort = 'name', id } = req.query;
       let category = await CategoryModel.findById(id).select(select);
       if (!category) return res.errors("Not found", 404, responseCode.results.notFound)
-      let products = await ProductModel.find({ category_id: id }).limit(20)
+      let products = await ProductModel.find({
+        category_id: id, status: {
+          $ne: -1
+        }
+      }).limit(20)
       let result = { category, products }
       return res.success(result);
 

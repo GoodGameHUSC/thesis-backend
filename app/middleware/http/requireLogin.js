@@ -26,25 +26,21 @@ export const requireLogin = async (req, res, next) => {
   }
 };
 
-// export const retrieveUser = async (req, res, next) => {
-
-
-//   try {
-//     if (req.headers[headerFieldBeUse]) {
-//       const userId = jwt.verify(req.headers[headerFieldBeUse] || '', env.SECRET_JWT).id;
-
-//       const user = await db.Customers.scope('public').findByPk(userId);
-//       if (user) {
-//         req.user = user;
-//         req.userId = userId;
-//         next();
-//       }
-//     } else next();
-//   } catch (err) {
-//     next(err);
-//     console.log(err);
-//   }
-// };
+export const retrieveUser = async (req, res, next) => {
+  try {
+    if (req.headers[headerFieldBeUse]) {
+      const userId = jwt.verify(req.headers[headerFieldBeUse], env.SECRET_JWT).id;
+      const user = await UserModel.findById(userId);
+      if (user) {
+        req.user = user;
+        req.userId = userId;
+      }
+      next();
+    } else next();
+  } catch (err) {
+    next(err);
+  }
+};
 
 export function getAccessTokenHeader(user) {
   const token = jwt.sign({ id: user._id }, env.SECRET_JWT, { expiresIn: expiresIn });
