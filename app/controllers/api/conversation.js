@@ -52,15 +52,15 @@ router.get('/get-conversation',
   })
 
 
-router.get('/all-with-shop',
+router.get('/all-of-shop',
   requireLogin,
   async (req, res, next) => {
     try {
-      const { user_id, shop_id } = req.query;
+      const { shop_id } = req.query;
       // TODO: change
-      const conversation = await ConversationModel.find({ user_id: { "$in": [user_id, shop_id] } });
+      const conversation = await ConversationModel.find({ user_id: { "$in": [shop_id] } });
 
-      return res.success(conversation, 'Tạo cửa hàng thành công');
+      return res.success(conversation, 'Danh sach tro chuyen cua cua hang');
     } catch (error) {
       console.log(error)
       next(error)
@@ -72,11 +72,11 @@ router.get('/all-of-customer',
   requireLogin,
   async (req, res, next) => {
     try {
-      const { user_id } = req.query;
+      const user = req.user;
       // TODO: change
-      const conversation = await ConversationModel.find({ user_id: { "$in": [user_id] } });
+      const conversation = await ConversationModel.find({ user_id: { "$in": [user._id] } });
 
-      return res.success(conversation, 'Tạo cửa hàng thành công');
+      return res.success(conversation, 'Danh sach tro chuyen cua nguoi dung');
     } catch (error) {
       console.log(error)
       next(error)

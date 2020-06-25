@@ -1,4 +1,5 @@
 import { io } from '../../../main.js'
+import MessageModel from '../../database/models/Message';
 
 
 const EventName = {
@@ -37,9 +38,16 @@ module.exports = (socket) => {
    *   
    * }
    */
-  socket.on("send_message", function (data) {
+  socket.on("send_message", async function (data) {
+    debugger;
     console.log("New message from " + data.user_id + " :" + data.msg_content.text);
     io.to(data.room_id).emit('receive_message', data);
+    const message = new MessageModel({
+      sender_id: data.user_id,
+      content: data.msg_content[0].text,
+      conversation: data.room_id
+    })
+    await message.save();
   })
 
 };

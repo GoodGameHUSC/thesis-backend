@@ -89,9 +89,32 @@ router.get('/detail',
     try {
       const { select, id } = req.query;
       let selected = select || null
-      let instance = await ProductModel.findById(id).populate('');
+      let instance = await ProductModel.findById(id);
       const rating = await RatingModel.find({ product: id }).populate('user', 'username avatar', null, null, { sort: '-createdAt', limit: 2 });
 
+      // TODO: Remove after several request
+      if (!instance.shop) {
+        instance.shop = '5edf03061592673c2ffcf678';
+        await instance.save();
+      }
+
+      let result = await ProductModel.findById(id).select(selected).populate('shop');
+
+      // result.rates = rating;
+
+      res.success({ product: result, rating });
+    } catch (error) {
+      next(error)
+    }
+  })
+
+router.get('/detail-for-admin',
+  async (req, res, next) => {
+    try {
+      const { select, id } = req.query;
+      let selected = select || null
+      let instance = await ProductModel.findById(id);
+      const rating = await RatingModel.find({ product: id }).populate('user', 'username avatar', null, null, { sort: '-createdAt', limit: 2 });
 
       // TODO: Remove after several request
       if (!instance.shop) {

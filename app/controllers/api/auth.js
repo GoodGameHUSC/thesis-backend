@@ -66,7 +66,6 @@ router.post('/login',
       password = password.toLowerCase();
       let user = await UserModel.findOne().or([{ email: credential }, { username: credential }]);
 
-      let shop = user.shop;
       if (!user) return res.errors("Thông tin đăng nhập không chính xác")
 
       const check = await Hashing.check(password, user.password);

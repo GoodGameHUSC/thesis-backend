@@ -6,6 +6,7 @@ const ShopSchema = new Schema({
   name: String,
   // avatar: String,
   slogan: String,
+  email: String,
   phone_number: String,
   location: Object,
   address: String,

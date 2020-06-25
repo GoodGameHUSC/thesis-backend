@@ -47,7 +47,9 @@ const ProductSchema = new Schema({
   list_rating: {
     type: [Object]
   },
-  visited_number: Number
+  visited_number: Number,
+  amount: Number,
+  net: Number
 }, {
   timestamp: true
 });
@@ -65,8 +67,15 @@ ProductSchema.virtual('real_price').get(function () {
 //   return [];
 // });
 
+
 ProductSchema.set('toJSON', { getters: true, virtuals: true });
 
 ProductSchema.index({ 'name': 'text' }) // full-text search
 const ProductModel = mongoose.model('Product', ProductSchema)
 export default ProductModel;
+
+const GallerySchema = new Schema({
+  link: String
+});
+
+export const GalleryModel = mongoose.model('Gallery', GallerySchema)

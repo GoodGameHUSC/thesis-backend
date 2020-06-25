@@ -8,7 +8,9 @@ import { check } from 'express-validator';
 import validate from '../../middleware/validator/index';
 import { Hashing } from '../../service/libs/authentication';
 import ShopModel from '../../database/models/Shop';
-import ProductModel from '../../database/models/Product';
+import ProductModel, { GalleryModel } from '../../database/models/Product';
+import uploader from '../../middleware/http/uploadFile';
+import RatingModel from '../../database/models/Rating';
 
 const router = app.Router();
 const mongoose = require('mongoose');
@@ -24,7 +26,7 @@ router.post('/create-shop',
 
       if (currentShop) return res.errors("Bạn chỉ có thể quản lý 1 cửa hàng tại 1 thời điểm");
 
-      const { name, slogan, phone_number, address, website_url } = req.body;
+      const { name, slogan, phone_number, address, website_url, email, brand_image } = req.body;
 
       const shop = new ShopModel({
         master_id: user._id,
@@ -32,9 +34,10 @@ router.post('/create-shop',
         slogan,
         phone_number,
         address,
+        email,
         website_url,
         is_active: true,
-        brand_image: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/The-Body-Shop-Logo.svg',
+        brand_image: brand_image ? brand_image : 'https://png.pngtree.com/png-clipart/20190516/original/pngtree-vector-shop-icon-png-image_3762863.jpg',
         brand_background: 'https://is4.revolveassets.com/images/up/2020/June/060820_f_soontosellout_01.jpg',
         average_rate: null,
         rates: []
@@ -42,12 +45,70 @@ router.post('/create-shop',
 
       await shop.save();
 
+      user.shop = shop._id;
+
+      await user.save();
       return res.success(shop, 'Tạo cửa hàng thành công');
     } catch (error) {
       console.log(error)
       next(error)
     }
   })
+
+
+router.post('/create-product',
+  requireLogin,
+  uploader.array('images'),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      const currentShop = await ShopModel.findOne({ master_id: user._id, is_active: true });
+
+      const { name, brand, description, category_id, price_real, discount, amount, net } = req.body;
+
+      try {
+
+        const gallery = await Promise.all(
+          req.files.map(async (file) => {
+            try {
+              file.buffer = await resizeImageBuffer(file.buffer, 400, null);
+            } catch (error) {
+              console.log("Unable to resize, still upload origin image");
+            }
+            let url = await FireBaseStorage.uploadFileToRef(file, 'images/profiles/');
+            return new GalleryModel({
+              link: url
+            })
+          })
+        )
+
+        const product = new ProductModel({
+          name,
+          brand,
+          description,
+          price: price_real,
+          discount,
+          category_id,
+          rating: [0, 1],
+          sold_number: 0,
+          gallery,
+          status: 1,
+          amount,
+          net,
+          shop: currentShop.id
+        })
+        await product.save();
+        return res.success(product, 'Tạo sản phẩm thành công');
+      } catch (error) {
+        console.log(error);
+        return res.errors("Tạo sản phẩm không thành công");
+      }
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  })
+
 
 router.get('/view-shop',
   async (req, res, next) => {
