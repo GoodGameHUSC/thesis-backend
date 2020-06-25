@@ -241,7 +241,7 @@ router.post('/create-rating',
         await saved_result.save();
       }
 
-      NLPService.IEforUser(keyword, req.user);
+      await NLPService.IEforUser(keyword, req.user);
     } catch (error) {
       console.log(error)
       next(error)
