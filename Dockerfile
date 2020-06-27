@@ -7,5 +7,5 @@ RUN npm install
 FROM node:12-alpine
 
 COPY --from=build /app /
-EXPOSE 8001
+EXPOSE 3001
 CMD ["npm", "start"]

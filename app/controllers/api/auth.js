@@ -6,13 +6,15 @@ import UserModel from '../../database/models/User';
 import { getAccessToken, expireTime, requireLogin } from '../../middleware/http/requireLogin.js';
 import { Hashing } from '../../service/libs/authentication';
 import { randomVerifyCode } from '../../utils/random'
-
+import { Address } from '../../definitions/sequelize/address';
+const mongoose = require('mongoose');
 const router = app.Router();
 
 
 router.post('/signup',
   validate([
     check('username', 'Vui lòng nhập tên đăng nhập').not().isEmpty(),
+    check('address', 'Vui lòng nhập địa chỉ nhận hàng mặc định').not().isEmpty(),
     check('email', 'Vui lòng nhập email').not().isEmpty()
       .isEmail().withMessage("Email không hợp lệ"),
     check('phone', 'Vui lòng nhập số điện thoại').not().isEmpty()
@@ -26,16 +28,19 @@ router.post('/signup',
   ]),
   async (req, res, next) => {
     try {
-      const { username, email, phone, password } = req.body;
+      const { username, email, phone, password, address } = req.body;
 
-      let user = await UserModel.findOne().or([{ email }, { username }]);
+      let user = await UserModel.findOne().or([{ email }, { phone }]);
       if (user) return res.errors("Email hoặc số điện thoại đã được sử dụng")
       email.toLowerCase();
       const passwordHashed = await Hashing.encrypt(password);
+
+      const newRecord = new Address(mongoose.Types.ObjectId(), {}, address, phone, null);
       let newUser = new UserModel({
         username,
-        email,
+        email: email.toLowerCase(),
         phone,
+        address_book: [newRecord],
         password: passwordHashed
       })
       await newUser.save()

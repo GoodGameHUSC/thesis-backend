@@ -24,7 +24,7 @@ class NLPService {
 
     const result = await this.ner(text);
     const new_keywords = result.result.label || [];
-    const current = user.interested || [];
+    let current = user.interested || [];
     debugger;
 
     new_keywords.forEach(element => {
@@ -39,7 +39,7 @@ class NLPService {
     });
 
     current.sort(function (x, y) { return -(x.times - y.times) });
-    current.slice(0, 10);
+    current = current.slice(0, 10);
 
     debugger;
     user.interested = current;

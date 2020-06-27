@@ -45,7 +45,7 @@ router.get('/get',
       let mapped = null;
       if (user) {
         const interested = user.interested || [];
-        if (interested.slice(0, 10).length > 0) {
+        if (interested.length > 0) {
           mapped = interested.slice(0, 10).map(e => e.keyword);
           let searchString = mapped.join(' ').trim();
           query = { ...query, $text: { $search: searchString } }
@@ -223,9 +223,14 @@ router.post('/create-rating',
       }
       await rating.save();
 
-      const order = await OrderModel.findById(order_id);
-      order.rating = rating.id;
-      await order.save();
+      try {
+        const order = await OrderModel.findById(order_id);
+        order.rating = rating.id;
+        await order.save();
+      } catch (error) {
+
+      }
+
       res.success(rating);
 
       const { result } = await NLPService.sentiment_analysis(content);
@@ -241,7 +246,8 @@ router.post('/create-rating',
         await saved_result.save();
       }
 
-      await NLPService.IEforUser(keyword, req.user);
+      await NLPService.IEforUser(content, user);
+
     } catch (error) {
       console.log(error)
       next(error)

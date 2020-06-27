@@ -11,6 +11,7 @@ import ShopModel from '../../database/models/Shop';
 import ProductModel, { GalleryModel } from '../../database/models/Product';
 import uploader from '../../middleware/http/uploadFile';
 import RatingModel from '../../database/models/Rating';
+import { FireBaseStorage } from '../../service/libs/firebase';
 
 const router = app.Router();
 const mongoose = require('mongoose');
@@ -58,7 +59,7 @@ router.post('/create-shop',
 
 router.post('/create-product',
   requireLogin,
-  uploader.array('images'),
+  uploader.array('images', 12),
   async (req, res, next) => {
     try {
       const user = req.user;
@@ -119,7 +120,12 @@ router.get('/view-shop',
       if (!shop) return res.errors("Không tìm thấy cửa hàng");
 
       const master = await UserModel.findById({ _id: shop.master_id })
-      const products = await ProductModel.find({ shop: id });
+      const products = await ProductModel.find({
+        shop: id,
+        status: {
+          $ne: -1
+        }
+      }).sort('-createdAt');
 
       return res.success({ info: shop, products, master });
     } catch (error) {
